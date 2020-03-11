@@ -4,11 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-se
+black = "==19.10b0"
 
 [packages]
 djangorestframework = "==3.11.0"
 Django = "==3.0.3"
+djoser = "==2.0.3"
+pendulum = "==2.1.0"
 
 [requires]
 python_version = "3.8"
