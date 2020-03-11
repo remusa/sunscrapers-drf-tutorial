@@ -21,7 +21,7 @@ class Friend(models.Model):
 
     @property
     def has_overdue(self):
-        if hasattr(self, 'ann_overdue'): # in case we deal with annotated object
+        if hasattr(self, "ann_overdue"):  # in case we deal with annotated object
             return self.ann_overdue
         return self.borrowed_set.filter(
             returned__isnull=True, when=pendulum.now().subtract(months=2)

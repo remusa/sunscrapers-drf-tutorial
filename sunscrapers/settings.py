@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rental",
     # Third party
     "djoser",
+    "django_filters",
     # Rest Framework
     "rest_framework",
     "rest_framework.authtoken",
@@ -129,4 +130,5 @@ REST_FRAMEWORK = {
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_PAGINATION_CLASS": "rental.pagination.HeaderLimitOffsetPagination",
     "PAGE_SIZE": 100,
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
