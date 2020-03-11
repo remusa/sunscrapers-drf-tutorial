@@ -16,7 +16,7 @@ class FriendQuerySet(models.QuerySet):
 
 class Friend(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField(default='')
+    email = models.EmailField(default="")
 
     objects = FriendQuerySet.as_manager()
 
