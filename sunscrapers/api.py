@@ -1,9 +1,22 @@
 from rest_framework import routers
+from rest_framework_extensions.routers import NestedRouterMixin
 
 from rental import views as myapp_views
 
-router = routers.DefaultRouter()
 
-router.register(r"friends", myapp_views.FriendViewset)
+class NestedDefaultRouter(NestedRouterMixin, routers.DefaultRouter):
+    pass
+
+
+router = NestedDefaultRouter()
+
+friends = router.register(r"friends", myapp_views.FriendViewset)
+
+friends.register(
+    r"borrowings",
+    myapp_views.BorrowedViewset,
+    base_name="friend-borrow",
+    parents_query_lookups=["to_who"],
+)
 router.register(r"belongings", myapp_views.BelongingViewset)
 router.register(r"borrowings", myapp_views.BorrowedViewset)

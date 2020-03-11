@@ -1,13 +1,15 @@
 import django_filters
 import pendulum
+from django.core.mail import send_mail
 from django.shortcuts import render
 from rest_framework import permissions, viewsets
+from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from . import models, serializers
 from .permissions import IsOwner
 
 
-class FriendViewset(viewsets.ModelViewSet):
+class FriendViewset(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = models.Friend.objects.with_overdue()
     serializer_class = serializers.FriendSerializer
     permission_classes = [IsOwner, permissions.IsAuthenticated]
@@ -19,7 +21,7 @@ class BelongingViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
 
 
-class BorrowedFilterSet(django_filters.FilterSet):
+class BorrowedFilterSet(NestedViewSetMixin, django_filters.FilterSet):
     missing = django_filters.BooleanFilter(field_name="returned", lookup_expr="isnull")
     overdue = django_filters.BooleanFilter(method="get_overdue", field_name="returned")
 
@@ -47,3 +49,15 @@ class BorrowedViewset(viewsets.ModelViewSet):
         if only_missing in ["true", "1"]:
             return qs.filter(returned__isnull=True)
         return qs
+
+    @action(detail=True, url_path='remind', methods=['post'])
+    def remind_single(self, request, *args, **kwargs):
+      obj = self.get_object()
+      send_mail(
+          subject=f"Please return my belonging: {obj.what.name}",
+          message=f'You forgot to return my belonging: "{obj.what.name}" that you borrowed on {obj.when}. Please return it.',
+          from_email="me@example.com",  # your email here
+          recipient_list=[obj.to_who.email],
+          fail_silently=False
+      )
+      return Response("Email sent.")
